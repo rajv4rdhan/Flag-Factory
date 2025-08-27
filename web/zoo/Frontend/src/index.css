@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-inter bg-gray-50 min-h-screen text-gray-900 antialiased;
+  }
+
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply relative inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent;
+  }
+  
+  .btn-primary {
+    @apply bg-gray-900 text-white shadow-sm hover:bg-gray-800 focus:ring-gray-500 border border-gray-900;
+  }
+  
+  .btn-primary:hover {
+    @apply scale-105;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-900 border border-gray-300 shadow-sm hover:bg-gray-200 focus:ring-gray-500;
+  }
+  
+  .btn-secondary:hover {
+    @apply scale-105;
+  }
+  
+  .btn-success {
+    @apply bg-green-600 text-white border border-green-600 shadow-sm hover:bg-green-700 focus:ring-green-500;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white border border-red-600 shadow-sm hover:bg-red-700 focus:ring-red-500;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 transition-all duration-300 hover:shadow-md hover:border-gray-300;
+  }
+  
+  .glass-card {
+    @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 text-gray-900 placeholder-gray-500;
+  }
+  
+  .input:focus {
+    @apply bg-white shadow-sm;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border;
+  }
+  
+  .badge-admin {
+    @apply bg-red-50 text-red-700 border-red-200;
+  }
+  
+  .badge-moderator {
+    @apply bg-amber-50 text-amber-700 border-amber-200;
+  }
+  
+  .badge-user {
+    @apply bg-blue-50 text-blue-700 border-blue-200;
+  }
+  
+  .notice-critical {
+    @apply bg-red-50 text-red-900 border-red-200;
+  }
+  
+  .notice-high {
+    @apply bg-orange-50 text-orange-900 border-orange-200;
+  }
+  
+  .notice-medium {
+    @apply bg-blue-50 text-blue-900 border-blue-200;
+  }
+  
+  .notice-low {
+    @apply bg-green-50 text-green-900 border-green-200;
+  }
+
+  .hero-text {
+    @apply text-gray-900;
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}

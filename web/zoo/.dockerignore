@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+README.md
+
+# Frontend development files
+Frontend/node_modules
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.development.local
+Frontend/.env.test.local
+Frontend/.env.production.local
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+Frontend/.vscode
+
+# Backend development files
+Backend/.env
+Backend/.env.local
+Backend/tmp
+Backend/vendor
+Backend/*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+*.md
+docs/

@@ -1,0 +1,6 @@
+animal_report_2024.pdf
+user_photos/elephant.jpg
+user_photos/lion.jpg
+user_photos/zebra.jpg
+maintenance_logs/january.txt
+maintenance_logs/february.txt
