@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
+	"strings"
 	"zoo/Backend/internal/handlers"
 	"zoo/Backend/internal/middleware"
 	"zoo/Backend/internal/orm"
 	"zoo/Backend/internal/storage"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func getEnv(key, defaultValue string) string {
@@ -20,12 +23,15 @@ func getEnv(key, defaultValue string) string {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
 	// Database connection from environment variables
-	dbHost := getEnv("DB_HOST", "postgres-vy60.sliplane.app")
-	dbUser := getEnv("DB_USER", "postgres")
-	dbPassword := getEnv("DB_PASSWORD", "PuOQaRZ49eBUrhb7")
-	dbName := getEnv("DB_NAME", "mydb")
-	dbPortStr := getEnv("DB_PORT", "5432")
+	dbHost := getEnv("DB_HOST", "")
+	dbUser := getEnv("DB_USER", "")
+	dbPassword := getEnv("DB_PASSWORD", "")
+	dbName := getEnv("DB_NAME", "")
+	dbPortStr := getEnv("DB_PORT", "")
 
 	dbPort, err := strconv.Atoi(dbPortStr)
 	if err != nil {
@@ -73,12 +79,12 @@ func main() {
 		})
 
 		// Auth endpoints with rate limiting
-		public.POST("/signup", middleware.AuthRateLimitMiddleware(), authHandler.Signup)
-		public.POST("/login", middleware.AuthRateLimitMiddleware(), authHandler.Login)
+		public.POST("/api/signup", middleware.AuthRateLimitMiddleware(), authHandler.Signup)
+		public.POST("/api/login", middleware.AuthRateLimitMiddleware(), authHandler.Login)
 	}
 
 	// Routes with optional authentication (for viewing)
-	view := r.Group("/")
+	view := r.Group("/api")
 	view.Use(middleware.OptionalAuthMiddleware())
 	{
 		view.GET("/home", homeHandler.GetHomePage)
@@ -89,10 +95,10 @@ func main() {
 	}
 
 	// Routes requiring authentication
-	auth := r.Group("/")
+	auth := r.Group("/api")
 	auth.Use(middleware.AuthMiddleware())
 	{
-		auth.GET("/api", handlers.Home)
+		auth.GET("/info", handlers.Home)
 		auth.GET("/profile", handlers.UserProfile)
 		auth.POST("/posts", postHandler.CreatePost)
 		auth.PUT("/posts/:id", postHandler.UpdatePost)
@@ -104,7 +110,7 @@ func main() {
 	}
 
 	// Admin-only routes
-	admin := r.Group("/admin")
+	admin := r.Group("/api/admin")
 	admin.Use(middleware.AuthMiddleware())
 	admin.Use(middleware.AdminOnlyMiddleware())
 	{
@@ -112,6 +118,22 @@ func main() {
 		admin.PUT("/notices/:id", noticeHandler.UpdateNotice)
 		admin.DELETE("/notices/:id", noticeHandler.DeleteNotice)
 	}
+
+	// SPA fallback for frontend routes
+	r.NoRoute(func(c *gin.Context) {
+		// Don't serve SPA for API routes
+		if strings.HasPrefix(c.Request.URL.Path, "/api") {
+			c.JSON(404, gin.H{"error": "API endpoint not found"})
+			return
+		}
+
+		// Serve index.html for frontend routes
+		if c.Request.Method == "GET" {
+			c.File("./public/index.html")
+		} else {
+			c.JSON(404, gin.H{"error": "Not found"})
+		}
+	})
 
 	// Server info
 	fmt.Println("🚀 Server starting on :8080")
