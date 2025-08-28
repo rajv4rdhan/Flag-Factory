@@ -94,14 +94,6 @@ jobs:
         
     - name: Image digest
       run: echo ${{ steps.build.outputs.digest }}
-      
-    - name: Update Docker Hub description
-      uses: peter-evans/dockerhub-description@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_USERNAME }}/ctf-z00
-        short-description: "Zoo Management System CTF Challenge"
 
   security-scan:
     needs: build-and-push
@@ -115,9 +107,13 @@ jobs:
         image-ref: ${{ env.DOCKER_IMAGE }}:latest
         format: 'sarif'
         output: 'trivy-results.sarif'
-        
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+
+  trigger-render:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Trigger Render webhook
+      run: |
+        curl -X POST ${{ secrets.ZOO_RENDER_WEBHOOK }}
