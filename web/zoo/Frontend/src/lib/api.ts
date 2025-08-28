@@ -50,8 +50,15 @@ export const apiEndpoints = {
   
   // Protected endpoints
   profile: '/profile',
+  profileSettings: '/profile/setting',
   
   // Admin endpoints
   adminFlag: '/admin/flag',
   adminNotices: '/admin/notices',
+};
+
+// User Settings API
+export const getUserSettings = async () => {
+  const response = await api.get(apiEndpoints.profileSettings);
+  return response.data;
 };

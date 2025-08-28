@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, FileText, Bell, User, LogIn, LogOut, Shield, Menu, X } from 'lucide-react';
+import { Home, FileText, Bell, User, LogIn, LogOut, Shield, Menu, X, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -83,6 +83,13 @@ export const Layout = ({ children }: LayoutProps) => {
                   >
                     <User size={18} />
                     <span>Profile</span>
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-gray-50"
+                  >
+                    <Settings size={18} />
+                    <span>Settings</span>
                   </Link>
                   {user.role === 'admin' && (
                     <Link
@@ -169,6 +176,14 @@ export const Layout = ({ children }: LayoutProps) => {
                   >
                     <User size={18} />
                     <span>Profile</span>
+                  </Link>
+                  <Link
+                    to="/settings"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-gray-50"
+                  >
+                    <Settings size={18} />
+                    <span>Settings</span>
                   </Link>
                   {user.role === 'admin' && (
                     <Link

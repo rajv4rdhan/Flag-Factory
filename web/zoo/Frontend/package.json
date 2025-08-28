@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && vite build --mode development",
+    "build:prod": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "ctd": "cpx \"dist/**/*\" \"../Backend/public\" --clean"

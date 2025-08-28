@@ -1,4 +1,4 @@
-import { User, Calendar, Shield } from 'lucide-react';
+import { User, Shield } from 'lucide-react';
 import { useProfile } from '../hooks/useApi';
 
 const ProfilePage = () => {
@@ -91,38 +91,28 @@ const ProfilePage = () => {
       </div>
 
       {/* CTF Info */}
-      <div className="card bg-purple-50 border-purple-200">
+      <div className="card bg-green-50 border-green-200">
         <div className="flex items-start space-x-3">
-          <Shield className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+          <Shield className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="text-lg font-medium text-purple-900 mb-2">🎯 CTF Profile</h3>
-            <p className="text-sm text-purple-800">
-              Your profile shows your current role in the CTF platform. Different roles have 
-              different permissions - try to find ways to escalate your privileges!
-            </p>
-            <div className="mt-3 text-xs text-purple-700">
-              <p>• <strong>User:</strong> Can create posts and view content</p>
-              <p>• <strong>Moderator:</strong> Can manage posts and notices</p>
-              <p>• <strong>Admin:</strong> Full access including flag retrieval</p>
-            </div>
+        <h3 className="text-lg font-medium text-green-900 mb-2">🦁 Zoo Keeper's Secret</h3>
+        <p className="text-sm text-green-800">
+          "In the digital zoo, only the master keeper holds the golden key. 
+          The animals whisper secrets, but only those with the highest authority 
+          can unlock the cage where the precious flag roams free..."
+        </p>
+        <div className="mt-3 text-xs text-green-700">
+          <p>🐨 <strong>Visitor:</strong> Can observe the animals from afar</p>
+          <p>🦒 <strong>Zookeeper:</strong> Can feed and care for some animals</p>
+          <p>🦁 <strong>Zoo Master:</strong> Commands all creatures and guards the sacred flag</p>
+        </div>
+        <div className="mt-2 text-xs text-green-600 italic">
+          Hint: After all this, the key to the cage lies in the shadows.
+        </div>
           </div>
         </div>
       </div>
 
-      {/* Security Notice for CTF */}
-      <div className="card bg-yellow-50 border-yellow-200">
-        <div className="flex items-start space-x-3">
-          <Calendar className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-          <div>
-            <h3 className="text-lg font-medium text-yellow-900 mb-2">🔐 Security Notice</h3>
-            <p className="text-sm text-yellow-800">
-              This is a CTF (Capture The Flag) environment. Some security features may be intentionally 
-              weakened for educational purposes. In a real application, profile data would be more 
-              comprehensive and secure.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

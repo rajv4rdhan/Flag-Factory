@@ -11,9 +11,11 @@ import SignupPage from './pages/SignupPage';
 import PostsPage from './pages/PostsPage';
 import NoticesPage from './pages/NoticesPage';
 import ProfilePage from './pages/ProfilePage';
+import UserSettings from './pages/UserSettings';
 import AdminPage from './pages/AdminPage';
 import CreatePostPage from './pages/CreatePostPage';
 import NotFoundPage from './pages/NotFoundPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Create a query client
 const queryClient = new QueryClient({
@@ -39,6 +41,14 @@ function App() {
               <Route path="/posts/create" element={<CreatePostPage />} />
               <Route path="/notices" element={<NoticesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <UserSettings />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
