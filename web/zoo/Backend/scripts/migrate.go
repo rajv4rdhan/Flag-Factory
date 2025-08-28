@@ -19,7 +19,7 @@ func main() {
 	command := os.Args[1]
 
 	// Database connection
-	db := orm.Connect("postgres-vy60.sliplane.app", "postgres", "PuOQaRZ49eBUrhb7", "mydb", 5432)
+	db := orm.Connect("postgres-xxqu.sliplane.app", "postgres", "AKGgAAHtcthqiJpG", "mydb", 5432)
 	defer db.Close()
 
 	switch command {

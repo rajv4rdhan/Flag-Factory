@@ -2,11 +2,11 @@ name: Build and Push Zoo CTF Docker Image
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ master, main, develop ]
     paths:
       - 'web/zoo/**'
   pull_request:
-    branches: [ main ]
+    branches: [ master, main ]
     paths:
       - 'web/zoo/**'
   workflow_dispatch:  # Allow manual trigger
@@ -89,7 +89,8 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
+        # platforms: linux/amd64,linux/arm64
         
     - name: Image digest
       run: echo ${{ steps.build.outputs.digest }}

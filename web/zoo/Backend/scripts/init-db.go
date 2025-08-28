@@ -3,16 +3,41 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"zoo/Backend/internal/orm"
+
+	"github.com/joho/godotenv"
 )
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
 
 func main() {
 	fmt.Println("🔧 Database Initialization Utility")
 	fmt.Println("==================================")
 
 	// Connect to database
-	db := orm.Connect("postgres-vy60.sliplane.app", "postgres", "PuOQaRZ49eBUrhb7", "mydb", 5432)
-	defer db.Close()
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+	// Database connection from environment variables
+	dbHost := getEnv("DB_HOST", "")
+	dbUser := getEnv("DB_USER", "")
+	dbPassword := getEnv("DB_PASSWORD", "")
+	dbName := getEnv("DB_NAME", "")
+	dbPortStr := getEnv("DB_PORT", "")
+
+	dbPort, err := strconv.Atoi(dbPortStr)
+	if err != nil {
+		dbPort = 5432
+	}
+
+	db := orm.Connect(dbHost, dbUser, dbPassword, dbName, dbPort)
 
 	// Initialize database
 	if err := initializeDatabase(db); err != nil {
@@ -141,6 +166,7 @@ func initializeDatabase(db *orm.DB) error {
 	}{
 		{"System Maintenance", "Scheduled maintenance window this weekend from 2-4 AM.", "admin", "high"},
 		{"Security Update", "Please update your passwords for enhanced security.", "admin", "critical"},
+		{"Information Leak", "User_data are exposed", "admin", "critical"},
 		{"New Features Available", "Check out the new posts and notices system!", "admin", "medium"},
 		{"Community Guidelines", "Please be respectful and follow our community rules.", "moderator", "low"},
 	}
