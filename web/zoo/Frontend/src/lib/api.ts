@@ -42,7 +42,8 @@ export const apiEndpoints = {
   // Auth endpoints
   signup: '/signup',
   login: '/login',
-  
+  logout: '/logout',
+
   // Public endpoints
   home: '/home',
   posts: '/posts',

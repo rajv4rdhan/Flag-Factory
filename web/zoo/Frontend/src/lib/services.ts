@@ -31,7 +31,8 @@ export const authService = {
     return response.data;
   },
 
-  logout() {
+  async logout() {
+    await api.post(apiEndpoints.logout);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   }

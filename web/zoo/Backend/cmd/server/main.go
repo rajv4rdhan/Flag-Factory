@@ -81,6 +81,7 @@ func main() {
 		// Auth endpoints with rate limiting
 		public.POST("/api/signup", middleware.AuthRateLimitMiddleware(), authHandler.Signup)
 		public.POST("/api/login", middleware.AuthRateLimitMiddleware(), authHandler.Login)
+		public.POST("/api/logout", authHandler.Logout)
 	}
 
 	// Routes with optional authentication (for viewing)

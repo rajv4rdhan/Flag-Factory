@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 	"zoo/Backend/internal/storage"
 	"zoo/Backend/internal/utils"
 
@@ -59,7 +60,14 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("auth_token", token, 3600, "/", "localhost", false, true)
+	domain := os.Getenv("COOKIE_DOMAIN")
+	if domain == "" {
+		domain = ""
+	}
+
+	isProduction := os.Getenv("ENVIRONMENT") == "production" || os.Getenv("RENDER") == "true"
+
+	c.SetCookie("auth_token", token, 3600, "/", domain, isProduction, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "login successful",
@@ -67,6 +75,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		"role":     user.Role,
 		"token":    token,
 	})
+}
+
+func (h *AuthHandler) Logout(c *gin.Context) {
+	domain := os.Getenv("COOKIE_DOMAIN")
+	if domain == "" {
+		domain = ""
+	}
+
+	isProduction := os.Getenv("ENVIRONMENT") == "production" || os.Getenv("RENDER") == "true"
+
+	c.SetCookie("auth_token", "", -1, "/", domain, isProduction, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }
 func (h *AuthHandler) UserProfileSetting(c *gin.Context) {
 	username, exists := c.Get("username")
