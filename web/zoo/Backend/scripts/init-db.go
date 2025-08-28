@@ -142,12 +142,12 @@ func initializeDatabase(db *orm.DB) error {
 	samplePosts := []struct {
 		title, content, author string
 	}{
-		{"Welcome to Zoo Backend", "This is the first post on our platform. Feel free to explore!", "admin"},
-		{"Development Updates", "We've added new features including posts and notices system.", "admin"},
-		{"User Guidelines", "Please follow community guidelines when posting content.", "moderator"},
-		{"Hello World", "My first post here! Excited to be part of this community.", "user1"},
-		{"Bug Report", "Found a small issue with the login system, will report it.", "user2"},
-		{"Feature Request", "Would love to see dark mode support in the future.", "testuser"},
+		{"Welcome to the Digital Zoo", "Welcome to our amazing digital zoo! Explore virtual exhibits and learn about wildlife from around the world.", "admin"},
+		{"New Animal Exhibit: Arctic Foxes", "We've just added a stunning Arctic Fox exhibit with interactive features and educational content.", "admin"},
+		{"Zoo Safety Guidelines", "Please follow all zoo safety guidelines when visiting exhibits and interacting with virtual animals.", "moderator"},
+		{"My First Zoo Visit", "Just visited the penguin exhibit - absolutely amazing! Can't wait to explore more animals.", "user1"},
+		{"Feeding Schedule Issue", "The lion feeding schedule seems to be showing incorrect times in the mobile app.", "user2"},
+		{"Feature Request: Night Mode for Nocturnal Animals", "Would love to see a night vision mode to observe nocturnal animals in their natural behavior.", "testuser"},
 	}
 
 	for _, post := range samplePosts {
@@ -164,11 +164,11 @@ func initializeDatabase(db *orm.DB) error {
 	sampleNotices := []struct {
 		title, content, author, priority string
 	}{
-		{"System Maintenance", "Scheduled maintenance window this weekend from 2-4 AM.", "admin", "high"},
-		{"Security Update", "Please update your passwords for enhanced security.", "admin", "critical"},
-		{"Information Leak", "User_data are exposed", "admin", "critical"},
-		{"New Features Available", "Check out the new posts and notices system!", "admin", "medium"},
-		{"Community Guidelines", "Please be respectful and follow our community rules.", "moderator", "low"},
+		{"Zoo Security Alert", "Visitor access user_data may have been compromised. Please update your zoo membership passwords.", "admin", "critical"},
+		{"Animal Exhibit Maintenance", "The tropical rainforest exhibit will be closed this weekend from 2-4 AM for habitat maintenance.", "admin", "high"},
+		{"Zoo Safety Update", "New safety protocols implemented. Please review updated visitor guidelines before your next visit.", "admin", "critical"},
+		{"New Zoo Features Available", "Explore our new virtual animal encounters and interactive feeding experiences!", "admin", "medium"},
+		{"Zoo Visitor Guidelines", "Please respect our animals and follow all zoo safety rules during your visit.", "moderator", "low"},
 	}
 
 	for _, notice := range sampleNotices {

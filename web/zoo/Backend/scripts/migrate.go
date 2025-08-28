@@ -7,8 +7,18 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"zoo/Backend/internal/orm"
+
+	"github.com/joho/godotenv"
 )
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -19,7 +29,22 @@ func main() {
 	command := os.Args[1]
 
 	// Database connection
-	db := orm.Connect("postgres-xxqu.sliplane.app", "postgres", "AKGgAAHtcthqiJpG", "mydb", 5432)
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+	// Database connection from environment variables
+	dbHost := getEnv("DB_HOST", "")
+	dbUser := getEnv("DB_USER", "")
+	dbPassword := getEnv("DB_PASSWORD", "")
+	dbName := getEnv("DB_NAME", "")
+	dbPortStr := getEnv("DB_PORT", "")
+	sslmode := getEnv("SSLMODE", "")
+	dbPort, err := strconv.Atoi(dbPortStr)
+	if err != nil {
+		dbPort = 5432
+	}
+
+	db := orm.Connect(dbHost, dbUser, dbPassword, dbName, dbPort, sslmode)
 	defer db.Close()
 
 	switch command {
