@@ -100,6 +100,7 @@ func main() {
 	{
 		auth.GET("/info", handlers.Home)
 		auth.GET("/profile", handlers.UserProfile)
+		auth.GET("/profile/setting", authHandler.UserProfileSetting)
 		auth.POST("/posts", postHandler.CreatePost)
 		auth.PUT("/posts/:id", postHandler.UpdatePost)
 		auth.DELETE("/posts/:id", postHandler.DeletePost)

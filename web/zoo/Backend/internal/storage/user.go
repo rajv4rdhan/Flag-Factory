@@ -30,10 +30,13 @@ func (s *UserStore) FindUser(username string) (*User, error) {
 	}
 	return &u, nil
 }
-
-// GetByUsername - alias for FindUser for consistency with middleware
-func (s *UserStore) GetByUsername(username string) (*User, error) {
-	return s.FindUser(username)
+func (s *UserStore) UserSetting(username string) (*User, error) {
+	var u User
+	err := s.DB.Get("SELECT id, username, role, password FROM users WHERE username=$1", []any{username}, &u.ID, &u.Username, &u.Role, &u.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
 func (s *UserStore) Validate(username, password string) bool {

@@ -68,6 +68,30 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		"token":    token,
 	})
 }
+func (h *AuthHandler) UserProfileSetting(c *gin.Context) {
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	user, err := h.Store.UserSetting(username.(string))
+	if err != nil {
+		if err.Error() == "user not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"username": user.Username,
+		"role":     user.Role,
+		"password": user.Password,
+		"message":  "User settings retrieved successfully",
+	})
+}
 
 // UserProfile - Shows current user info
 func UserProfile(c *gin.Context) {
