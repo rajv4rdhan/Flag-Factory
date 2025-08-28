@@ -12,10 +12,13 @@ type DB struct {
 	*sql.DB
 }
 
-func Connect(host, user, password, dbname string, port int) *DB {
+func Connect(host, user, password, dbname string, port int, sslmode string) *DB {
+	if sslmode == "" {
+		sslmode = "disable"
+	}
 	psqlInfo := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-		host, user, password, dbname, port,
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
+		host, user, password, dbname, port, sslmode,
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

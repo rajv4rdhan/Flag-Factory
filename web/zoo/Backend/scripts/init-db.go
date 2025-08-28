@@ -31,13 +31,13 @@ func main() {
 	dbPassword := getEnv("DB_PASSWORD", "")
 	dbName := getEnv("DB_NAME", "")
 	dbPortStr := getEnv("DB_PORT", "")
-
+	sslmode := getEnv("SSLMODE", "")
 	dbPort, err := strconv.Atoi(dbPortStr)
 	if err != nil {
 		dbPort = 5432
 	}
 
-	db := orm.Connect(dbHost, dbUser, dbPassword, dbName, dbPort)
+	db := orm.Connect(dbHost, dbUser, dbPassword, dbName, dbPort, sslmode)
 
 	// Initialize database
 	if err := initializeDatabase(db); err != nil {
