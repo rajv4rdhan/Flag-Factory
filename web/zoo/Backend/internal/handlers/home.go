@@ -29,6 +29,10 @@ func (h *HomeHandler) GetHomePage(c *gin.Context) {
 	username, _ := c.Get("username")
 	role, _ := c.Get("role")
 	authenticated, _ := c.Get("authenticated")
+	//flag
+	if role == "admin" {
+		c.Header("X-Developer", "ZmxhZ3s0ZE0xTl9iY3dlMzJkc19oMG1lX3BhZ2V9")
+	}
 
 	homeData := gin.H{
 		"posts":   posts,

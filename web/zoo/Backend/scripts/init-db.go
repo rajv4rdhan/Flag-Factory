@@ -115,7 +115,7 @@ func initializeDatabase(db *orm.DB) error {
 	// Insert sample data
 	sampleData := []struct {
 		username, password, role string
-	}{
+	}{ //flag
 		{"admin", "CTF{H4R0_tr4v3rs4l_ch4mp10n}", "admin"},
 		{"user1", "password123", "user"},
 		{"user2", "password456", "user"},

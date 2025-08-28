@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"net/http"
 	"os"
 	"zoo/Backend/internal/storage"
@@ -123,5 +124,10 @@ func UserProfile(c *gin.Context) {
 		"username": username,
 		"role":     role,
 		"message":  "This is your profile",
+		//flag
+		"metadata": map[string]interface{}{
+			"build":  "v1.0.0",
+			"config": base64.StdEncoding.EncodeToString([]byte("flag{b4s364_m3t4d4t4_fl4g}")),
+		},
 	})
 }
