@@ -40,8 +40,8 @@ piece independently.
 
 ## 2. The model
 
-- **Model:** `HuggingFaceTB/SmolLM2-135M-Instruct`.
-- **Format:** GGUF `Q4_K_M` (~100 MB), CPU-only.
+- **Model:** `Qwen/Qwen2.5-0.5B-Instruct`.
+- **Format:** GGUF `Q4_K_M` (~470 MB), CPU-only.
 - **Engine:** `llama.cpp` `llama-server`, which exposes
   `/v1/chat/completions` (OpenAI-compatible).
 - Weights are **not committed**; `model/artifacts/` is gitignored with a
@@ -124,7 +124,7 @@ Anti-cheat basics from day one:
 
 ```bash
 cp .env.example .env          # set FLAG=flag{...}
-make model-download           # fetch + convert SmolLM2-135M to GGUF Q4
+make model-download           # fetch + convert Qwen2.5-0.5B to GGUF Q4
 docker compose up --build
 open http://localhost:3000
 ```

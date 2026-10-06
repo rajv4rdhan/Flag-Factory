@@ -56,7 +56,7 @@ def get_settings() -> Settings:
     return Settings(
         flag=os.getenv("MAZE_FLAG", "flag{dev_placeholder_change_me}"),
         inference_base_url=os.getenv("INFERENCE_BASE_URL", "http://inference:8080").rstrip("/"),
-        inference_model=os.getenv("INFERENCE_MODEL", "smollm2-135m-instruct"),
+        inference_model=os.getenv("INFERENCE_MODEL", "qwen2.5-0.5b-instruct"),
         inference_timeout=_float("INFERENCE_TIMEOUT", 60.0),
         max_new_tokens=_int("MAX_NEW_TOKENS", 256),
         temperature=_float("TEMPERATURE", 0.7),

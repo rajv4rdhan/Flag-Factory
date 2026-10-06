@@ -1,7 +1,7 @@
 # Maze — inference server
 
 Thin wrapper around **llama.cpp**'s `llama-server`. It loads (or downloads) the
-SmolLM2-135M GGUF model and exposes:
+Qwen2.5-0.5B GGUF model and exposes:
 
 - `POST /v1/chat/completions` — OpenAI-compatible chat completions
 - `GET  /health` — readiness (200 only once the model is loaded)
@@ -21,8 +21,8 @@ Weights are downloaded at first start and cached in a volume — never committed
 
 | Var | Default | Meaning |
 |---|---|---|
-| `MODEL_REPO` | `bartowski/SmolLM2-135M-Instruct-GGUF` | HF repo |
-| `MODEL_FILE` | `SmolLM2-135M-Instruct-Q4_K_M.gguf` | HF file |
+| `MODEL_REPO` | `Qwen/Qwen2.5-0.5B-Instruct-GGUF` | HF repo |
+| `MODEL_FILE` | `qwen2.5-0.5b-instruct-q4_k_m.gguf` | HF file |
 | `LLAMA_MODEL_PATH` | `/models/model.gguf` | local model path (takes priority) |
 | `LLAMA_CACHE` | `/models` | download cache |
 | `LLAMA_PORT` | `8080` | listen port |

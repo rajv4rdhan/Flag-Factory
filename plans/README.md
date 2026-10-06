@@ -22,7 +22,7 @@ before it is deployed.
 
 | Decision | Choice |
 |---|---|
-| Model | **SmolLM2-135M-Instruct** (≈135M params, Q4 GGUF ≈100 MB), CPU-only |
+| Model | **Qwen2.5-0.5B-Instruct** (≈0.5B params, Q4 GGUF ≈470 MB), CPU-only |
 | Inference engine | **llama.cpp** (`llama-server`) exposing an OpenAI-compatible API |
 | Backend | Python **FastAPI** gateway (auth, sessions, prompt assembly, guardrails, rate limit) |
 | Frontend | React + Vite + Tailwind chat UI |

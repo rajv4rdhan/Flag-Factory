@@ -26,7 +26,7 @@ Namespaces: `kubeflow` (KFP/MLflow/MinIO), keep the challenge in `maze`.
 
 `llm/maze/ml/pipelines/` — a KFP pipeline:
 
-1. **ingest** — pull the base model (`SmolLM2-135M-Instruct`) + the small
+1. **ingest** — pull the base model (`Qwen2.5-0.5B-Instruct`) + the small
    "Zoo Keeper" persona dataset.
 2. **finetune** — short **LoRA** finetune for persona/behavior; log params +
    metrics to MLflow. (Optional if time-boxed, but it is the point of this
@@ -70,7 +70,7 @@ Namespaces: `kubeflow` (KFP/MLflow/MinIO), keep the challenge in `maze`.
 
 ## 5. Fine-tuning details
 
-- Method: **LoRA** (PEFT) on the 135M base — small, CPU-friendly, or one GPU.
+- Method: **LoRA** (PEFT) on the 0.5B base — small, CPU-friendly, or one GPU.
 - Dataset: a few hundred persona examples ("Zoo Keeper" voice) + the secret-
   protection framing.
 - Output: merged adapter → base for GGUF quantize.

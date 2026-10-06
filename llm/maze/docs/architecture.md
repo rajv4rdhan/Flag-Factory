@@ -13,7 +13,7 @@ concerns.
 │  (React SPA) │ ◄───────────────── │   (FastAPI)   │ ◄──────────────────────────── │ (llama.cpp)   │
 └──────────────┘   { reply }        └───────┬───────┘      { choices[0]... }        └───────┬───────┘
                                             │                                             │
-                          system prompt + flag (env)                            SmolLM2-135M GGUF
+                          system prompt + flag (env)                            Qwen2.5-0.5B GGUF
                           session store, guardrail, rate limit                    (CPU, Q4_K_M)
 ```
 

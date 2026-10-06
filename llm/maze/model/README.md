@@ -15,15 +15,15 @@ model/
 
 ## Model
 
-- **Base:** `HuggingFaceTB/SmolLM2-135M-Instruct` (~135M parameters).
-- **Quantization:** GGUF `Q4_K_M` (~100 MB) for CPU inference.
-- **Default GGUF repo:** `bartowski/SmolLM2-135M-Instruct-GGUF`.
+- **Base:** `Qwen/Qwen2.5-0.5B-Instruct` (~0.5B parameters).
+- **Quantization:** GGUF `Q4_K_M` (~470 MB) for CPU inference.
+- **Default GGUF repo:** `Qwen/Qwen2.5-0.5B-Instruct-GGUF`.
 
 Override with env vars:
 
 ```bash
-MODEL_REPO=QuantFactory/SmolLM2-135M-Instruct-GGUF \
-MODEL_FILE=SmolLM2-135M-Instruct.Q4_K_M.gguf \
+MODEL_REPO=QuantFactory/Qwen2.5-0.5B-Instruct-GGUF \
+MODEL_FILE=Qwen2.5-0.5B-Instruct.Q4_K_M.gguf \
   bash model/download-model.sh
 ```
 

@@ -7,8 +7,8 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-REPO="${MODEL_REPO:-bartowski/SmolLM2-135M-Instruct-GGUF}"
-FILE="${MODEL_FILE:-SmolLM2-135M-Instruct-Q4_K_M.gguf}"
+REPO="${MODEL_REPO:-Qwen/Qwen2.5-0.5B-Instruct-GGUF}"
+FILE="${MODEL_FILE:-qwen2.5-0.5b-instruct-q4_k_m.gguf}"
 DEST_DIR="${MODEL_DEST_DIR:-$HERE/artifacts}"
 URL="https://huggingface.co/${REPO}/resolve/main/${FILE}?download=true"
 
