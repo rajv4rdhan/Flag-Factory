@@ -15,6 +15,8 @@ COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/app ./app
+COPY backend/tests ./tests
+COPY backend/pyproject.toml ./pyproject.toml
 COPY model/prompts ./prompts
 
 ENV PROMPT_PATH=/app/prompts/system.txt
