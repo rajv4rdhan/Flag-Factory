@@ -111,7 +111,7 @@ jobs:
   trigger-render:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     
     steps:
     - name: Trigger Render webhook

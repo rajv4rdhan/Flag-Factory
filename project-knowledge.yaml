@@ -1,0 +1,214 @@
+project:
+  name: "Flag-Factory"
+  pitch: "Flag-Factory is a CTF challenge factory; its main deployable is Zoo, a deliberately vulnerable digital zoo community platform with Go/Gin backend, React frontend and Postgres, plus XO2, a minimal LLM chat frontend that proxies prompts to an external model via Cloudflare Tunnel."
+  role: "Solo developer"
+  duration: "2025-08-28 (single day, 11 commits)"
+  repo_url: "https://github.com/rajv4rdhan/Flag-Factory"
+  live_url: ""
+
+tech_stack:
+  languages:
+    - "Go 1.23.4"
+    - "TypeScript 5.8.3 / 5.9.3"
+    - "JavaScript"
+    - "SQL (PostgreSQL)"
+    - "HTML"
+    - "CSS"
+    - "Shell (bash, PowerShell)"
+  frameworks_and_tools:
+    - "Gin v1.10.1"
+    - "golang-jwt/jwt v5.3.0"
+    - "lib/pq v1.10.9"
+    - "godotenv v1.5.1"
+    - "React 19.1.1"
+    - "React Router DOM 7.8.2"
+    - "TanStack React Query 5.85.5"
+    - "Axios 1.11.0"
+    - "lucide-react 0.542.0"
+    - "Vite 4.5.2 / rolldown-vite 7.1.14"
+    - "@vitejs/plugin-react 4.3.1 / 5.0.4"
+    - "Tailwind CSS 3.4.1 / 4.1.14"
+    - "ESLint 9.33 / 9.36 + typescript-eslint"
+    - "PostCSS 8.5.6 + autoprefixer"
+    - "cpx 1.5.0 (copy dist to Backend/public)"
+  cloud_and_devops:
+    - "Docker multi-stage (node:18-alpine, golang:1.23.4-alpine, alpine:latest)"
+    - "Docker Compose 3.8 (zoo-app + postgres:15-alpine)"
+    - "Docker Buildx + GitHub Actions cache (gha)"
+    - "GitHub Actions (checkout@v4, setup-node@v4, setup-go@v4, docker/setup-buildx@v3, docker/login-action@v3, docker/metadata-action@v5, docker/build-push-action@v5)"
+    - "Trivy vulnerability scanner (aquasecurity/trivy-action, SARIF format)"
+    - "Render.com deploy via webhook curl POST (ZOO_RENDER_WEBHOOK secret)"
+    - "Aiven Cloud Postgres (pg-1521904f-spark00856-350e.c.aivencloud.com:18798, SSLMODE=require)"
+    - "dotenv env management with setup scripts (setup.sh, setup.ps1, setup-render-env.sh/ps1)"
+  databases:
+    - "PostgreSQL 15-alpine (Docker) / Aiven managed Postgres"
+    - "Tables: users (id, username, password, role), posts (id, title, content, author), notices (id, title, content, author, priority)"
+
+points:
+  - text: "Built Gin REST API server in web/zoo/Backend/cmd/server/main.go with 4 route groups: public (/api/signup, /api/login), optional-auth (/api/home, /posts, /notices), auth-required (/api/files, /posts CRUD, /profile/setting), admin-only (/api/admin/notices)"
+    tags: [backend]
+    evidence: "web/zoo/Backend/cmd/server/main.go:69-122"
+
+  - text: "Implemented JWT generation with HS256, hardcoded key super_secret_key and 1-hour expiry in internal/utils/jwt.go GenerateJWT"
+    tags: [backend, security]
+    evidence: "web/zoo/Backend/internal/utils/jwt.go:10-27"
+
+  - text: "Intentionally implemented vulnerable JWT parsing in ParseJWT that accepts any signing method and falls back to ParseUnverified without validation, always returning claims for CTF exploitation"
+    tags: [backend, security, ctf]
+    evidence: "web/zoo/Backend/internal/utils/jwt.go:30-50"
+
+  - text: "Created AuthMiddleware that extracts token from auth_token cookie or Authorization Bearer header and trusts ParseJWT output without validation, plus OptionalAuthMiddleware that sets guest role when unauthenticated"
+    tags: [backend, security]
+    evidence: "web/zoo/Backend/internal/utils/jwt.go:54-83, internal/middleware/auth.go:15-40"
+
+  - text: "Implemented signup handler that creates users with plaintext passwords and default role user, and login handler that validates via UserStore.Validate and sets HttpOnly cookie with domain from COOKIE_DOMAIN and Secure flag based on ENVIRONMENT/RENDER"
+    tags: [backend, security, database]
+    evidence: "web/zoo/Backend/internal/handlers/auth.go:17-78"
+
+  - text: "Exposed user password in authenticated endpoint GET /api/profile/setting via UserProfileSetting returning username, role and password from storage/user.go UserSetting"
+    tags: [backend, security, ctf, database]
+    evidence: "web/zoo/Backend/internal/handlers/auth.go:93-116, internal/storage/user.go:33-40"
+
+  - text: "Embedded base64 flag flag{b4s364_m3t4d4t4_fl4g} in authenticated UserProfile response metadata and two additional flags via HTTP headers X-Developer (home.go) and lag (Home) containing base64 ZmxhZ3s0ZE0xTl9iY3dlMzJkc19oMG1lX3BhZ2V9 and ZmxhZ3t6MDBfYjRja2VuZF9oMG1lX3BhZ2V9"
+    tags: [backend, security, ctf]
+    evidence: "web/zoo/Backend/internal/handlers/auth.go:119-133, internal/handlers/home.go:33-54"
+
+  - text: "Built vulnerable file download endpoint GET /api/download?file= that allows path traversal when filename contains user_data or scripts, using filepath.Join with basePath ./ctf_files/user_data/"
+    tags: [backend, security, ctf]
+    evidence: "web/zoo/Backend/internal/handlers/file.go:16-54"
+
+  - text: "Seeded ctf_files directory with flag at ctf_files/tmp/flag.txt, user_data files (readme.txt, uploaded_files.txt, animal_report_2024.pdf), decoy .env and backup script at ctf_files/scripts/backup.sh"
+    tags: [backend, security, ctf, devops]
+    evidence: "web/zoo/Backend/ctf_files/tmp/flag.txt, ctf_files/user_data/readme.txt"
+
+  - text: "Set admin user password to flag CTF{H4R0_tr4v3rs4l_ch4mp10n} inside init-db.go sampleData seed (10 users total), plus 6 sample posts and 5 notices including critical notices hinting at user_data compromise"
+    tags: [backend, database, security, ctf]
+    evidence: "web/zoo/Backend/scripts/init-db.go:116-129"
+
+  - text: "Implemented role-based access control with AdminOnlyMiddleware and ModeratorOrAdminMiddleware checking role from context, enforced on /api/admin group in main.go"
+    tags: [backend, security]
+    evidence: "web/zoo/Backend/internal/middleware/roles.go:10-47, cmd/server/main.go:115-122"
+
+  - text: "Created custom lightweight ORM wrapper in internal/orm/orm.go Connect that builds psqlInfo from host/user/password/dbname/port/sslmode and provides Insert, Get, Exists helpers over database/sql"
+    tags: [backend, database]
+    evidence: "web/zoo/Backend/internal/orm/orm.go:15-46"
+
+  - text: "Defined PostgreSQL schema in scripts/init-db.go: users table with id SERIAL PRIMARY KEY, username UNIQUE, password, role, indexes on username; posts table with indexes on author/created_at; notices table with priority and indexes"
+    tags: [backend, database]
+    evidence: "web/zoo/Backend/scripts/init-db.go:62-110"
+
+  - text: "Implemented PostStore with CreatePost, GetAllPosts (ORDER BY created_at DESC LIMIT 10), GetPostByID, UpdatePost/DeletePost with permission check author vs admin in handlers/post.go"
+    tags: [backend, database]
+    evidence: "web/zoo/Backend/internal/storage/post.go:12-62, internal/handlers/post.go:80-155"
+
+  - text: "Implemented NoticeStore with CreateNotice, GetAllNotices (ORDER BY CASE priority critical>high>medium>low LIMIT 5), GetNoticeByID, Update/Delete, and priority validation low/medium/high/critical in handlers/notice.go"
+    tags: [backend, database]
+    evidence: "web/zoo/Backend/internal/storage/notice.go:18-47, internal/handlers/notice.go:43-49"
+
+  - text: "Added CORS middleware supporting dynamic FRONTEND_URL and DOMAIN env, allowing credentials and handling OPTIONS 204, plus SecurityHeadersMiddleware (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)"
+    tags: [backend, security, devops]
+    evidence: "web/zoo/Backend/internal/middleware/common.go:13-71"
+
+  - text: "Implemented in-memory sliding-window rate limiter in middleware/ratelimit.go with RateLimiterStore per client IP, mutex locking, cleanup ticker every 5 minutes, AuthRateLimitMiddleware 5 req/min and Strict 3 req/5min"
+    tags: [backend, security]
+    evidence: "web/zoo/Backend/internal/middleware/ratelimit.go:11-143"
+
+  - text: "Configured SPA serving: Static middleware, r.Static /assets, r.StaticFile /vite.svg, NoRoute fallback serving public/index.html for non-API GET requests, returning JSON 404 for /api paths"
+    tags: [backend, frontend, devops]
+    evidence: "web/zoo/Backend/cmd/server/main.go:58-138, internal/middleware/static.go"
+
+  - text: "Built React 19 SPA in web/zoo/Frontend/src/App.tsx with BrowserRouter, QueryClient (retry 1, refetchOnWindowFocus false), AuthProvider, routes for Home, Login, Signup, Posts, Notices, Profile, Settings (ProtectedRoute), Admin, NotFound"
+    tags: [frontend]
+    evidence: "web/zoo/Frontend/src/App.tsx:1-63"
+
+  - text: "Created Axios API client in Frontend/src/lib/api.ts with baseURL /api, withCredentials true, request interceptor adding Bearer token from localStorage, response interceptor clearing auth on 401, and typed endpoints in apiEndpoints"
+    tags: [frontend, security]
+    evidence: "web/zoo/Frontend/src/lib/api.ts:4-59"
+
+  - text: "Implemented AuthContext in Frontend/src/contexts/AuthContext.tsx using localStorage for authToken/user persistence, login/logout methods and isLoading state check on mount"
+    tags: [frontend, security]
+    evidence: "web/zoo/Frontend/src/contexts/AuthContext.tsx:27-84"
+
+  - text: "Built TanStack React Query integration with custom useApi hook in Frontend/src/hooks/useApi.ts and api service layer in lib/services.ts for posts/notices fetching"
+    tags: [frontend]
+    evidence: "web/zoo/Frontend/src/hooks/useApi.ts, src/lib/services.ts"
+
+  - text: "Implemented frontend build pipeline with Vite (outDir dist, base /) and cpx ctd script to copy dist/**/* to ../Backend/public --clean for single-container deployment"
+    tags: [frontend, devops]
+    evidence: "web/zoo/Frontend/package.json:13, vite.config.ts:7-17"
+
+  - text: "Designed Tailwind CSS theme in web/zoo/Frontend/tailwind.config.js with extended colors border/input/primary/secondary/success/danger, custom fonts Comic Neue/Nunito/Inter/JetBrains Mono, and animations wiggle/float/shimmer"
+    tags: [frontend]
+    evidence: "web/zoo/Frontend/tailwind.config.js:8-142"
+
+  - text: "Built XO2 LLM chat frontend in llm/XO2/Frontend as standalone Vite+React app with ChatInterface posting {prompt} to https://alike-ordered-prisoner-spin.trycloudflare.com/ask, handling typing indicator, auto-scroll, WelcomeMessage suggestions and ErrorBoundary"
+    tags: [frontend, ai, llm]
+    evidence: "llm/XO2/Frontend/src/components/ChatInterface.tsx:42-80, src/utils/constants.ts:1-6"
+
+  - text: "Created multi-stage Dockerfile: stage1 node:18-alpine npm ci and npm run build, stage2 golang:1.23.4-alpine go mod download and CGO_ENABLED=0 go build, stage3 alpine with ca-certificates copying binary + public + ctf_files, EXPOSE 8080, GIN_MODE=release"
+    tags: [devops, cloud]
+    evidence: "web/zoo/Dockerfile:1-59"
+
+  - text: "Orchestrated docker-compose.yml with zoo-app (port 8080:8080, env DB_*, depends_on postgres) and postgres:15-alpine with volumes postgres_data and migrations init; prod variant adds healthcheck pg_isready, port 80:8080 and resource limits 512M/1G"
+    tags: [devops, cloud, database]
+    evidence: "web/zoo/docker-compose.yml, docker-compose.prod.yml"
+
+  - text: "Configured GitHub Actions workflow .github/workflows/zoo-ctf-docker.yml with path-filtered triggers on master/main/develop, test job (Node 18 npm ci/build + Go 1.23.4 build), build-and-push job with Docker Buildx, metadata tags branch/sha/latest/stable, gha cache, linux/amd64, Trivy SARIF scan on main and Render webhook curl on master"
+    tags: [devops, cloud, security, testing]
+    evidence: ".github/workflows/zoo-ctf-docker.yml:1-119"
+
+  - text: "Documented and implemented Render.com cookie fix in RENDER_DEPLOYMENT.md and auth.go/common.go: handling COOKIE_DOMAIN, ENVIRONMENT/RENDER detection for Secure flag, FRONTEND_URL/DOMAIN for CORS origin, tested via withCredentials"
+    tags: [backend, cloud, devops, security]
+    evidence: "web/zoo/RENDER_DEPLOYMENT.md, Backend/internal/handlers/auth.go:64-71, internal/middleware/common.go:15-22"
+
+  - text: "Added SSL mode configuration for Aiven Cloud Postgres via SSLMODE env param in Connect and getEnv handling in cmd/server/main.go, scripts/init-db.go and migrate.go, with .env example showing SSLMODE=require"
+    tags: [backend, database, cloud, devops]
+    evidence: "web/zoo/Backend/internal/orm/orm.go:15-22, cmd/server/main.go:35-41, Backend/.env.example:7"
+
+  - text: "Implemented migration tool in scripts/migrate.go supporting up/down/reset commands reading sorted *.sql files from ../migrations, though migrations 001_create_users_table.sql and 002_seed_data.sql are empty and schema is applied via init-db.go"
+    tags: [backend, database, devops]
+    evidence: "web/zoo/Backend/scripts/migrate.go:50-112, migrations/001_create_users_table.sql"
+
+  - text: "[inferred] No automated unit/integration test suite found; verification relies on CI build checks (npm run build, go build) and ESLint, with no *_test.go, __tests__ or coverage reports"
+    tags: [testing]
+    evidence: ".github/workflows/zoo-ctf-docker.yml:40-51, absence of test files in Backend and Frontend"
+
+git_summary:
+  total_commits: 11
+  branches:
+    - name: "master"
+      purpose: "sole development branch containing all 11 commits; default branch for CI and Render webhook deploy"
+    - name: "origin/master"
+      purpose: "remote tracking branch for origin"
+  notable_commits:
+    - hash: "6ee59b0"
+      message: "z00 ctf"
+    - hash: "b0695a1"
+      message: "Refactor frontend API base URL, update asset links in index.html, and remove obsolete files"
+    - hash: "6a7bae8"
+      message: "Recreate Zoo CTF Docker workflow with enhanced build and security scanning steps"
+    - hash: "bad4885"
+      message: "Add SSL mode configuration to database connection"
+    - hash: "33cb2d8"
+      message: "feat: Add User Settings page and Protected Route"
+    - hash: "b51c53f"
+      message: "Add deployment guide for handling cookie issues on Render.com"
+    - hash: "bdba42e"
+      message: "added webhook"
+
+challenges:
+  - problem: "Cookies not persisting on Render.com custom subdomain due to Secure flag and CORS origin mismatch in production"
+    solution: "Implemented dynamic cookie handling via COOKIE_DOMAIN, ENVIRONMENT and RENDER env vars for Secure/HttpOnly flags, and CORS middleware checking FRONTEND_URL and DOMAIN substring; documented in RENDER_DEPLOYMENT.md with Frontend withCredentials true"
+    tags: [backend, security, cloud, devops]
+
+  - problem: "Needed intentionally exploitable JWT for CTF while keeping normal auth functional for legitimate users"
+    solution: "Built ParseJWT that accepts any signing method and falls back to ParseUnverified on error, always returning claims regardless of validity, allowing forged admin tokens without breaking GenerateJWT for real logins"
+    tags: [backend, security, ctf]
+
+  - problem: "Single-container deployment requires Go backend to serve built React frontend and handle client-side routing without separate hosting"
+    solution: "Used multi-stage Docker (node build then go build) copying Frontend/dist to Backend/public, configured Gin Static and NoRoute fallback to index.html for non-API GETs, plus cpx ctd script for local sync"
+    tags: [devops, cloud, frontend, backend]
+
+  - problem: "Rate limiting needed for auth endpoints without external store, risking memory leak from per-IP limiters"
+    solution: "Implemented in-memory RateLimiterStore with per-IP sliding window, RWMutex for concurrency, and background cleanup ticker every 5 minutes removing idle limiters"
+    tags: [backend, security]
