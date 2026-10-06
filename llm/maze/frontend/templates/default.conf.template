@@ -5,16 +5,17 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # Proxy the API to the backend so the browser only ever talks to one origin.
+    # Upstream is configurable via env so the same image works with a compose
+    # network (BACKEND_HOST=backend) or host networking (BACKEND_HOST=127.0.0.1).
     location /api/ {
-        proxy_pass http://backend:8000;
+        proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
     location = /healthz {
-        proxy_pass http://backend:8000/healthz;
+        proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/healthz;
     }
 
     # SPA fallback.

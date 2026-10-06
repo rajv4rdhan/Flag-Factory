@@ -1,0 +1,17 @@
+# Keep the build context small and avoid leaking dev artifacts into images.
+**/node_modules
+**/dist
+**/__pycache__
+**/.venv
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+
+# Model weights are downloaded at runtime, never baked in / sent as context.
+model/artifacts
+
+# VCS / misc
+.git
+.gitignore
+*.log
+.DS_Store

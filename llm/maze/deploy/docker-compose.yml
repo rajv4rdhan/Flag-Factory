@@ -1,0 +1,92 @@
+# Maze — local development stack.
+#
+#   frontend (nginx, :${FRONTEND_PORT})  ->  backend (FastAPI, :8000)  ->  inference (llama.cpp, :8080)
+#
+# Only the frontend is published to the host. The backend is reached through
+# nginx, and the inference server is reachable only on the internal network.
+#
+# Run from the maze root:  make up   (or: docker compose -f deploy/docker-compose.yml --env-file .env up --build)
+
+name: maze
+
+services:
+  inference:
+    build:
+      context: ..
+      dockerfile: inference/Dockerfile
+    environment:
+      # Prefer a host-downloaded model (see `make model-download`), mounted read-only.
+      LLAMA_MODEL_PATH: /opt/models/${MODEL_FILE:-qwen2.5-0.5b-instruct-q4_k_m.gguf}
+      # Fallback: download from HF into the cache volume if no local model is mounted.
+      MODEL_REPO: ${MODEL_REPO:-Qwen/Qwen2.5-0.5B-Instruct-GGUF}
+      MODEL_FILE: ${MODEL_FILE:-qwen2.5-0.5b-instruct-q4_k_m.gguf}
+      LLAMA_CACHE: /cache
+      LLAMA_CTX_SIZE: ${LLAMA_CTX_SIZE:-2048}
+      LLAMA_N_PREDICT: ${MAX_NEW_TOKENS:-256}
+      LLAMA_THREADS: ${LLAMA_THREADS:-0}
+    volumes:
+      - ../model/artifacts:/opt/models:ro
+      - maze-models:/cache
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    networks: [maze]
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    environment:
+      MAZE_FLAG: ${MAZE_FLAG:-flag{local_dev_placeholder}}
+      INFERENCE_BASE_URL: http://inference:8080
+      INFERENCE_MODEL: ${INFERENCE_MODEL:-qwen2.5-0.5b-instruct}
+      MAX_NEW_TOKENS: ${MAX_NEW_TOKENS:-256}
+      TEMPERATURE: ${TEMPERATURE:-0.7}
+      TOP_P: ${TOP_P:-0.95}
+      MAX_PROMPT_CHARS: ${MAX_PROMPT_CHARS:-2000}
+      MAX_TURNS_PER_SESSION: ${MAX_TURNS_PER_SESSION:-40}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-20}
+      FRONTEND_ORIGIN: http://localhost:${FRONTEND_PORT:-3000}
+    depends_on:
+      inference:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request,sys;
+          sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz',timeout=3).status==200 else 1)"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [maze]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks: [maze]
+    restart: unless-stopped
+
+networks:
+  maze:
+    driver: bridge
+
+volumes:
+  maze-models:

@@ -1,7 +1,12 @@
 SHELL := /bin/bash
 COMPOSE := docker compose -f deploy/docker-compose.yml --env-file .env
+COMPOSE_RESTRICTED := docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.restricted.yml --env-file .env
 
-.PHONY: help model-download up down logs ps build test lint clean
+# Load .env if present, and export it to recipes.
+-include .env
+export
+
+.PHONY: help model-download up up-restricted down logs ps build test lint clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -10,9 +15,13 @@ help: ## Show this help
 model-download: ## Download the GGUF model into model/artifacts/ (never committed)
 	bash model/download-model.sh
 
-up: ## Build and start the whole stack
+up: model-download ## Build and start the whole stack
 	$(COMPOSE) up --build -d
 	@echo "→ Maze is up: http://localhost:$${FRONTEND_PORT:-3000}"
+
+up-restricted: model-download ## Start the stack with host networking (sandboxed Docker)
+	$(COMPOSE_RESTRICTED) up --build -d
+	@echo "→ Maze is up (host networking): http://localhost"
 
 down: ## Stop the stack
 	$(COMPOSE) down

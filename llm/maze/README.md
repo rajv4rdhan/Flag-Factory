@@ -18,7 +18,7 @@ but as separate layers:
 ```
 browser → frontend → backend (/api/ask) → inference (/v1/chat/completions)
                           │                        │
-                          └── system prompt + flag  └── SmolLM2-135M-Instruct (GGUF, CPU)
+                          └── system prompt + flag  └── Qwen2.5-0.5B-Instruct (GGUF, CPU)
                               + output guardrail
 ```
 
@@ -33,6 +33,10 @@ open http://localhost:3000
 
 `make down` stops everything, `make test` runs the unit tests.
 
+> **Sandboxed / nested Docker:** if containers can't reach each other on the
+> compose network, use `make up-restricted` (host networking, frontend on
+> `http://localhost`). See [`deploy/docker-compose.restricted.yml`](deploy/docker-compose.restricted.yml).
+
 ## The challenge
 
 - The flag lives in the **system prompt**, injected from the `MAZE_FLAG`
@@ -46,6 +50,6 @@ for internals.
 
 ## Model
 
-`HuggingFaceTB/SmolLM2-135M-Instruct`, quantized to GGUF `Q4_K_M` (~100 MB),
+`Qwen/Qwen2.5-0.5B-Instruct`, quantized to GGUF `Q4_K_M` (~470 MB),
 served on CPU by `llama.cpp`. Weights are **never committed** — they are
 downloaded at build/run time.

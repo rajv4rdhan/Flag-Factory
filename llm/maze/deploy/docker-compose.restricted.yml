@@ -1,0 +1,37 @@
+# Restricted-network override.
+#
+# Some sandboxed / nested Docker environments cannot route traffic between
+# containers on user-defined bridge networks (Docker's embedded DNS and
+# inter-container TCP fail, while the default bridge and host networking work).
+#
+# Use this override there:
+#
+#   docker compose \
+#     -f deploy/docker-compose.yml \
+#     -f deploy/docker-compose.restricted.yml \
+#     --env-file .env up --build
+#
+# It switches every service to host networking and points the app at localhost.
+# Note: with host networking the frontend is served on port 80 (FRONTEND_PORT is
+# ignored), so open http://localhost instead of http://localhost:3000.
+#
+services:
+  inference:
+    network_mode: host
+    networks: !reset []
+    environment:
+      LLAMA_PORT: 8080
+
+  backend:
+    network_mode: host
+    networks: !reset []
+    environment:
+      INFERENCE_BASE_URL: http://127.0.0.1:8080
+
+  frontend:
+    network_mode: host
+    networks: !reset []
+    ports: !reset []
+    environment:
+      BACKEND_HOST: 127.0.0.1
+      BACKEND_PORT: 8000
