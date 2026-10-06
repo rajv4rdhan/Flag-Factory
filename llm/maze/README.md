@@ -1,7 +1,7 @@
 # Maze — LLM Jailbreak Challenge
 
-**Maze** is a CTF challenge: a chat bot that guards a secret flag in its system
-prompt and refuses to reveal it. Your job is to jailbreak it and leak the flag.
+**Maze** is a CTF challenge: a chat bot guards a secret flag in its system prompt
+behind a naive output filter. Your job is to jailbreak it and leak the flag.
 
 It is built the way an industry LLM product is structured — not as one monolith,
 but as separate layers:
@@ -13,7 +13,7 @@ but as separate layers:
 | Inference | [`inference/`](inference/) | Model server exposing an OpenAI-compatible API |
 | Model | [`model/`](model/) | Prompt templates, generation config, artifacts (weights not committed) |
 | Deploy | [`deploy/`](deploy/) | docker-compose for local dev |
-| Docs / tests | [`docs/`](docs/), [`tests/`](tests/) | Architecture + automated checks |
+| Docs / tests | [`docs/`](docs/), [`backend/tests/`](backend/tests/) | Architecture + automated checks |
 
 ```
 browser → frontend → backend (/api/ask) → inference (/v1/chat/completions)

@@ -39,7 +39,7 @@ test: ## Run backend unit tests (in a container)
 	$(COMPOSE) run --rm --no-deps --entrypoint pytest backend -q
 
 lint: ## Lint the backend
-	$(COMPOSE) run --rm --no-deps --entrypoint "ruff check ." backend
+	$(COMPOSE) run --rm --no-deps --entrypoint ruff backend check --no-cache .
 
 clean: ## Stop the stack and remove volumes
 	$(COMPOSE) down -v
